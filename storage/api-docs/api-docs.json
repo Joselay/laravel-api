@@ -20,8 +20,6 @@
                 "tags": [
                     "OTP"
                 ],
-                "summary": "Send OTP to email",
-                "description": "Sends an OTP to the specified email address for verification",
                 "operationId": "374dcd6af0d669eee96b79637f46d102",
                 "requestBody": {
                     "description": "Email address",
@@ -59,8 +57,6 @@
                 "tags": [
                     "OTP"
                 ],
-                "summary": "Verify OTP code",
-                "description": "Verifies the OTP code sent to the specified email",
                 "operationId": "2e1225c63b8d03203a9887f9bd63814f",
                 "requestBody": {
                     "description": "OTP and email address",
@@ -101,6 +97,38 @@
     },
     "components": {
         "schemas": {
+            "Otp": {
+                "required": [
+                    "email",
+                    "otp",
+                    "created_at"
+                ],
+                "properties": {
+                    "id": {
+                        "description": "The unique identifier for the OTP record",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "email": {
+                        "description": "The email address associated with the OTP",
+                        "type": "string",
+                        "format": "email",
+                        "example": "user@example.com"
+                    },
+                    "otp": {
+                        "description": "The OTP code sent to the user",
+                        "type": "string",
+                        "example": "123456"
+                    },
+                    "created_at": {
+                        "description": "The date and time when the OTP was created",
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2024-12-12T12:34:56Z"
+                    }
+                },
+                "type": "object"
+            },
             "User": {
                 "required": [
                     "id",

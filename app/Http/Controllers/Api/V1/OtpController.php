@@ -13,8 +13,6 @@ class OtpController extends Controller
      * @OA\Post(
      *     path="/send-otp",
      *     tags={"OTP"},
-     *     summary="Send OTP to email",
-     *     description="Sends an OTP to the specified email address for verification",
      *     @OA\RequestBody(
      *         required=true,
      *         description="Email address",
@@ -58,8 +56,6 @@ class OtpController extends Controller
      * @OA\Post(
      *     path="/verify-otp",
      *     tags={"OTP"},
-     *     summary="Verify OTP code",
-     *     description="Verifies the OTP code sent to the specified email",
      *     @OA\RequestBody(
      *         required=true,
      *         description="OTP and email address",
