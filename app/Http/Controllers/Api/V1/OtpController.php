@@ -11,7 +11,7 @@ class OtpController extends Controller
 {
     /**
      * @OA\Post(
-     *     path="/api/otp",
+     *     path="/send-otp",
      *     tags={"OTP"},
      *     summary="Send OTP to email",
      *     description="Sends an OTP to the specified email address for verification",
@@ -56,7 +56,7 @@ class OtpController extends Controller
 
     /**
      * @OA\Post(
-     *     path="/api/verify-otp",
+     *     path="/verify-otp",
      *     tags={"OTP"},
      *     summary="Verify OTP code",
      *     description="Verifies the OTP code sent to the specified email",

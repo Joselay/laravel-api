@@ -15,16 +15,16 @@
         }
     ],
     "paths": {
-        "/send-email": {
+        "/send-otp": {
             "post": {
                 "tags": [
-                    "Email"
+                    "OTP"
                 ],
-                "summary": "Send welcome email after user registration",
-                "description": "Sends a welcome email to the user after successful registration and OTP verification.",
-                "operationId": "0e588d941c0eb7910e3e3d833772d880",
+                "summary": "Send OTP to email",
+                "description": "Sends an OTP to the specified email address for verification",
+                "operationId": "374dcd6af0d669eee96b79637f46d102",
                 "requestBody": {
-                    "description": "User email",
+                    "description": "Email address",
                     "required": true,
                     "content": {
                         "application/json": {
@@ -35,7 +35,8 @@
                                 "properties": {
                                     "email": {
                                         "type": "string",
-                                        "example": "john.doe@example.com"
+                                        "format": "email",
+                                        "example": "user@example.com"
                                     }
                                 },
                                 "type": "object"
@@ -45,50 +46,41 @@
                 },
                 "responses": {
                     "200": {
-                        "description": "Email sent successfully"
+                        "description": "OTP sent successfully"
                     },
                     "400": {
-                        "description": "Failed to send email"
+                        "description": "Invalid email"
                     }
                 }
             }
         },
-        "/register": {
+        "/verify-otp": {
             "post": {
                 "tags": [
-                    "Users"
+                    "OTP"
                 ],
-                "summary": "Register a new user and send OTP for verification",
-                "description": "Creates a new user and sends an OTP to the provided email address for verification. If OTP verification fails, user registration will be skipped.",
-                "operationId": "d34d58799e4f2aacda8d9719efaf7b67",
+                "summary": "Verify OTP code",
+                "description": "Verifies the OTP code sent to the specified email",
+                "operationId": "2e1225c63b8d03203a9887f9bd63814f",
                 "requestBody": {
-                    "description": "User registration data",
+                    "description": "OTP and email address",
                     "required": true,
                     "content": {
                         "application/json": {
                             "schema": {
                                 "required": [
-                                    "name",
                                     "email",
-                                    "password",
-                                    "password_confirmation"
+                                    "otp"
                                 ],
                                 "properties": {
-                                    "name": {
-                                        "type": "string",
-                                        "example": "John Doe"
-                                    },
                                     "email": {
                                         "type": "string",
-                                        "example": "john.doe@example.com"
+                                        "format": "email",
+                                        "example": "user@example.com"
                                     },
-                                    "password": {
+                                    "otp": {
                                         "type": "string",
-                                        "example": "password123"
-                                    },
-                                    "password_confirmation": {
-                                        "type": "string",
-                                        "example": "password123"
+                                        "example": "123456"
                                     }
                                 },
                                 "type": "object"
@@ -97,63 +89,11 @@
                     }
                 },
                 "responses": {
-                    "201": {
-                        "description": "User registered successfully, OTP sent",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "message": {
-                                            "type": "string",
-                                            "example": "User registered successfully. Please check your email for OTP verification."
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    },
-                    "422": {
-                        "description": "Validation error",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "message": {
-                                            "type": "string",
-                                            "example": "The given data was invalid."
-                                        },
-                                        "errors": {
-                                            "type": "object",
-                                            "additionalProperties": {
-                                                "schema": "RegisterController",
-                                                "type": "array",
-                                                "items": {
-                                                    "type": "string"
-                                                }
-                                            }
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
+                    "200": {
+                        "description": "OTP verified successfully"
                     },
                     "400": {
-                        "description": "OTP verification failed or user registration skipped",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "message": {
-                                            "type": "string",
-                                            "example": "OTP verification failed. User registration not completed."
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
+                        "description": "Invalid OTP or email"
                     }
                 }
             }
@@ -161,42 +101,6 @@
     },
     "components": {
         "schemas": {
-            "RegisterController": {
-                "type": "array",
-                "items": {
-                    "type": "string"
-                }
-            },
-            "Otp": {
-                "title": "Otp",
-                "description": "Otp model for storing OTP details",
-                "properties": {
-                    "id": {
-                        "type": "integer",
-                        "format": "int64",
-                        "example": 1
-                    },
-                    "email": {
-                        "type": "string",
-                        "example": "user@example.com"
-                    },
-                    "otp": {
-                        "type": "string",
-                        "example": "123456"
-                    },
-                    "created_at": {
-                        "type": "string",
-                        "format": "date-time",
-                        "example": "2024-12-13T10:00:00Z"
-                    },
-                    "updated_at": {
-                        "type": "string",
-                        "format": "date-time",
-                        "example": "2024-12-13T10:00:00Z"
-                    }
-                },
-                "type": "object"
-            },
             "User": {
                 "required": [
                     "id",
@@ -241,12 +145,8 @@
     },
     "tags": [
         {
-            "name": "Email",
-            "description": "Email"
-        },
-        {
-            "name": "Users",
-            "description": "Users"
+            "name": "OTP",
+            "description": "OTP"
         }
     ]
 }
