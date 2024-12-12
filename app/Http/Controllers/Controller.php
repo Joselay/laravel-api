@@ -6,7 +6,7 @@ use OpenApi\Attributes as OA;
 
 #[
     OA\Info(version: '1.0.0', title: 'API Documentation', description: 'API Documentation'),
-    OA\Server(url: 'http://localhost:8000/api/v1', description: 'Local server'),
+    OA\Server(url: 'http://localhost:8000/api/v1'),
     OA\SecurityScheme(
         securityScheme: 'bearerAuth',
         type: "http",

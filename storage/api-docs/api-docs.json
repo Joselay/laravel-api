@@ -7,8 +7,7 @@
     },
     "servers": [
         {
-            "url": "http://localhost:8000/api/v1",
-            "description": "Local server"
+            "url": "http://localhost:8000/api/v1"
         },
         {
             "url": "/"
@@ -90,6 +89,94 @@
                     },
                     "400": {
                         "description": "Invalid OTP or email"
+                    }
+                }
+            }
+        },
+        "/users": {
+            "get": {
+                "tags": [
+                    "User"
+                ],
+                "operationId": "47249454f1cdb4ad92ff4dd2abad233f",
+                "responses": {
+                    "200": {
+                        "description": "Successfully retrieved users",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "properties": {
+                                            "id": {
+                                                "type": "integer",
+                                                "example": 1
+                                            },
+                                            "name": {
+                                                "type": "string",
+                                                "example": "John Doe"
+                                            },
+                                            "email": {
+                                                "type": "string",
+                                                "example": "user@example.com"
+                                            }
+                                        },
+                                        "type": "object"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error"
+                    }
+                }
+            }
+        },
+        "/users/{id}": {
+            "get": {
+                "tags": [
+                    "User"
+                ],
+                "operationId": "90ca44c038360e66084588a1a5951520",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "User ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successfully retrieved user",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "id": {
+                                            "type": "integer",
+                                            "example": 1
+                                        },
+                                        "name": {
+                                            "type": "string",
+                                            "example": "John Doe"
+                                        },
+                                        "email": {
+                                            "type": "string",
+                                            "example": "user@example.com"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "User not found"
                     }
                 }
             }
@@ -175,6 +262,10 @@
         {
             "name": "OTP",
             "description": "OTP"
+        },
+        {
+            "name": "User",
+            "description": "User"
         }
     ]
 }
