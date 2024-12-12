@@ -7,7 +7,7 @@
     },
     "servers": [
         {
-            "url": "http://localhost:8000",
+            "url": "http://localhost:8000/api/v1",
             "description": "Local server"
         },
         {
@@ -15,16 +15,16 @@
         }
     ],
     "paths": {
-        "/api/otp": {
+        "/send-email": {
             "post": {
                 "tags": [
-                    "OTP"
+                    "Email"
                 ],
-                "summary": "Send OTP to email",
-                "description": "Sends an OTP to the specified email address for verification",
-                "operationId": "0f777b671cb868d22a159c9364fd43e1",
+                "summary": "Send welcome email after user registration",
+                "description": "Sends a welcome email to the user after successful registration and OTP verification.",
+                "operationId": "0e588d941c0eb7910e3e3d833772d880",
                 "requestBody": {
-                    "description": "Email address",
+                    "description": "User email",
                     "required": true,
                     "content": {
                         "application/json": {
@@ -35,8 +35,7 @@
                                 "properties": {
                                     "email": {
                                         "type": "string",
-                                        "format": "email",
-                                        "example": "user@example.com"
+                                        "example": "john.doe@example.com"
                                     }
                                 },
                                 "type": "object"
@@ -46,89 +45,24 @@
                 },
                 "responses": {
                     "200": {
-                        "description": "OTP sent successfully"
+                        "description": "Email sent successfully"
                     },
                     "400": {
-                        "description": "Invalid email"
+                        "description": "Failed to send email"
                     }
                 }
             }
         },
-        "/api/verify-otp": {
-            "post": {
-                "tags": [
-                    "OTP"
-                ],
-                "summary": "Verify OTP code",
-                "description": "Verifies the OTP code sent to the specified email",
-                "operationId": "9c58f8dd50999f6e4ddd20104f6e1174",
-                "requestBody": {
-                    "description": "OTP and email address",
-                    "required": true,
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "required": [
-                                    "email",
-                                    "otp"
-                                ],
-                                "properties": {
-                                    "email": {
-                                        "type": "string",
-                                        "format": "email",
-                                        "example": "user@example.com"
-                                    },
-                                    "otp": {
-                                        "type": "string",
-                                        "example": "123456"
-                                    }
-                                },
-                                "type": "object"
-                            }
-                        }
-                    }
-                },
-                "responses": {
-                    "200": {
-                        "description": "OTP verified successfully"
-                    },
-                    "400": {
-                        "description": "Invalid OTP or email"
-                    }
-                }
-            }
-        },
-        "/api/users": {
-            "get": {
-                "tags": [
-                    "Users"
-                ],
-                "description": "Fetches a list of all users",
-                "operationId": "60e6ec72fbb2dd5f8977b3623a5bd2f6",
-                "responses": {
-                    "200": {
-                        "description": "List of users",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "array",
-                                    "items": {
-                                        "$ref": "#/components/schemas/User"
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            },
+        "/register": {
             "post": {
                 "tags": [
                     "Users"
                 ],
-                "description": "Creates a new user with provided data",
-                "operationId": "23b7ba485f2f33276fee0b673f729a51",
+                "summary": "Register a new user and send OTP for verification",
+                "description": "Creates a new user and sends an OTP to the provided email address for verification. If OTP verification fails, user registration will be skipped.",
+                "operationId": "d34d58799e4f2aacda8d9719efaf7b67",
                 "requestBody": {
-                    "description": "User data",
+                    "description": "User registration data",
                     "required": true,
                     "content": {
                         "application/json": {
@@ -136,7 +70,8 @@
                                 "required": [
                                     "name",
                                     "email",
-                                    "password"
+                                    "password",
+                                    "password_confirmation"
                                 ],
                                 "properties": {
                                     "name": {
@@ -148,6 +83,10 @@
                                         "example": "john.doe@example.com"
                                     },
                                     "password": {
+                                        "type": "string",
+                                        "example": "password123"
+                                    },
+                                    "password_confirmation": {
                                         "type": "string",
                                         "example": "password123"
                                     }
@@ -159,140 +98,62 @@
                 },
                 "responses": {
                     "201": {
-                        "description": "User created successfully",
+                        "description": "User registered successfully, OTP sent",
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/User"
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "User registered successfully. Please check your email for OTP verification."
+                                        }
+                                    },
+                                    "type": "object"
                                 }
                             }
                         }
                     },
                     "422": {
-                        "description": "Validation error"
-                    }
-                }
-            }
-        },
-        "/api/users/{id}": {
-            "get": {
-                "tags": [
-                    "Users"
-                ],
-                "description": "Fetches a specific user by ID",
-                "operationId": "1b0033ebfd92ac053df80ca3523c618d",
-                "parameters": [
-                    {
-                        "name": "id",
-                        "in": "path",
-                        "description": "ID of the user",
-                        "required": true,
-                        "schema": {
-                            "type": "integer"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "User details",
+                        "description": "Validation error",
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/User"
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "The given data was invalid."
+                                        },
+                                        "errors": {
+                                            "type": "object",
+                                            "additionalProperties": {
+                                                "schema": "RegisterController",
+                                                "type": "array",
+                                                "items": {
+                                                    "type": "string"
+                                                }
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
                                 }
                             }
                         }
                     },
-                    "404": {
-                        "description": "User not found"
-                    }
-                }
-            },
-            "put": {
-                "tags": [
-                    "Users"
-                ],
-                "description": "Updates user details for a given ID",
-                "operationId": "30d7b826acc88364c63d5c76e52c5ca8",
-                "parameters": [
-                    {
-                        "name": "id",
-                        "in": "path",
-                        "description": "ID of the user",
-                        "required": true,
-                        "schema": {
-                            "type": "integer"
-                        }
-                    }
-                ],
-                "requestBody": {
-                    "description": "User data to update",
-                    "required": true,
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "required": [
-                                    "name",
-                                    "email"
-                                ],
-                                "properties": {
-                                    "name": {
-                                        "type": "string",
-                                        "example": "John Doe"
-                                    },
-                                    "email": {
-                                        "type": "string",
-                                        "example": "john.doe@example.com"
-                                    },
-                                    "password": {
-                                        "type": "string",
-                                        "example": "password123"
-                                    }
-                                },
-                                "type": "object"
-                            }
-                        }
-                    }
-                },
-                "responses": {
-                    "200": {
-                        "description": "User updated successfully",
+                    "400": {
+                        "description": "OTP verification failed or user registration skipped",
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/User"
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "OTP verification failed. User registration not completed."
+                                        }
+                                    },
+                                    "type": "object"
                                 }
                             }
                         }
-                    },
-                    "404": {
-                        "description": "User not found"
-                    }
-                }
-            },
-            "delete": {
-                "tags": [
-                    "Users"
-                ],
-                "description": "Deletes a user by their ID",
-                "operationId": "3fd8e1f699bedcf7329d66aafcafa323",
-                "parameters": [
-                    {
-                        "name": "id",
-                        "in": "path",
-                        "description": "ID of the user",
-                        "required": true,
-                        "schema": {
-                            "type": "integer"
-                        }
-                    }
-                ],
-                "responses": {
-                    "204": {
-                        "description": "User deleted successfully"
-                    },
-                    "404": {
-                        "description": "User not found"
                     }
                 }
             }
@@ -300,6 +161,42 @@
     },
     "components": {
         "schemas": {
+            "RegisterController": {
+                "type": "array",
+                "items": {
+                    "type": "string"
+                }
+            },
+            "Otp": {
+                "title": "Otp",
+                "description": "Otp model for storing OTP details",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "format": "int64",
+                        "example": 1
+                    },
+                    "email": {
+                        "type": "string",
+                        "example": "user@example.com"
+                    },
+                    "otp": {
+                        "type": "string",
+                        "example": "123456"
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2024-12-13T10:00:00Z"
+                    },
+                    "updated_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2024-12-13T10:00:00Z"
+                    }
+                },
+                "type": "object"
+            },
             "User": {
                 "required": [
                     "id",
@@ -344,8 +241,8 @@
     },
     "tags": [
         {
-            "name": "OTP",
-            "description": "OTP"
+            "name": "Email",
+            "description": "Email"
         },
         {
             "name": "Users",
