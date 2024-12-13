@@ -96,9 +96,8 @@
         "/register": {
             "post": {
                 "tags": [
-                    "User"
+                    "Auth"
                 ],
-                "summary": "Register user and trigger OTP sending",
                 "operationId": "92ff0f48c20de1eb9099b6c5c8d19e22",
                 "requestBody": {
                     "description": "User registration details",
@@ -150,39 +149,70 @@
         "/users": {
             "get": {
                 "tags": [
-                    "User"
+                    "Users"
                 ],
                 "operationId": "47249454f1cdb4ad92ff4dd2abad233f",
                 "responses": {
                     "200": {
-                        "description": "Successfully retrieved users",
+                        "description": "Successfully retrieved list of users",
                         "content": {
                             "application/json": {
                                 "schema": {
                                     "type": "array",
                                     "items": {
-                                        "properties": {
-                                            "id": {
-                                                "type": "integer",
-                                                "example": 1
-                                            },
-                                            "name": {
-                                                "type": "string",
-                                                "example": "John Doe"
-                                            },
-                                            "email": {
-                                                "type": "string",
-                                                "example": "user@example.com"
-                                            }
-                                        },
-                                        "type": "object"
+                                        "$ref": "#/components/schemas/User"
                                     }
                                 }
                             }
                         }
                     },
-                    "500": {
-                        "description": "Internal Server Error"
+                    "404": {
+                        "description": "No users found"
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Users"
+                ],
+                "operationId": "381804010d0bc76cac24bab8ac5f1707",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "example": "John Doe"
+                                    },
+                                    "email": {
+                                        "type": "string",
+                                        "example": "john.doe@example.com"
+                                    },
+                                    "password": {
+                                        "type": "string",
+                                        "example": "password123"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "User created successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/User"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Validation error"
                     }
                 }
             }
@@ -190,7 +220,7 @@
         "/users/{id}": {
             "get": {
                 "tags": [
-                    "User"
+                    "Users"
                 ],
                 "operationId": "90ca44c038360e66084588a1a5951520",
                 "parameters": [
@@ -210,24 +240,91 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "properties": {
-                                        "id": {
-                                            "type": "integer",
-                                            "example": 1
-                                        },
-                                        "name": {
-                                            "type": "string",
-                                            "example": "John Doe"
-                                        },
-                                        "email": {
-                                            "type": "string",
-                                            "example": "user@example.com"
-                                        }
-                                    },
-                                    "type": "object"
+                                    "$ref": "#/components/schemas/User"
                                 }
                             }
                         }
+                    },
+                    "404": {
+                        "description": "User not found"
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "Users"
+                ],
+                "operationId": "e734c66a7d375609edee2154bc5f7b47",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "User ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "example": "John Doe"
+                                    },
+                                    "email": {
+                                        "type": "string",
+                                        "example": "john.doe@example.com"
+                                    },
+                                    "password": {
+                                        "type": "string",
+                                        "example": "newpassword123"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "User updated successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/User"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "User not found"
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Users"
+                ],
+                "operationId": "9daa558fb80f5a3e2b490a3a5b05a716",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "User ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "User deleted successfully"
                     },
                     "404": {
                         "description": "User not found"
@@ -314,12 +411,15 @@
     },
     "tags": [
         {
+            "name": "Users"
+        },
+        {
             "name": "OTP",
             "description": "OTP"
         },
         {
-            "name": "User",
-            "description": "User"
+            "name": "Auth",
+            "description": "Auth"
         }
     ]
 }

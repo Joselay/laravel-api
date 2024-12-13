@@ -10,8 +10,7 @@ class RegisterController extends Controller
     /**
      * @OA\Post(
      *     path="/register",
-     *     tags={"User"},
-     *     summary="Register user and trigger OTP sending",
+     *     tags={"Auth"},
      *     @OA\RequestBody(
      *         required=true,
      *         description="User registration details",
